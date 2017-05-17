@@ -9,7 +9,7 @@ import Album from '../components/Album';
 import Sidebar from '../components/Sidebar';
 import Player from '../components/Player';
 
-import { convertAlbum, convertAlbums, skip } from '../utils';
+import { convertAlbum, convertAlbums, skip, convertSong } from '../utils';
 
 export default class AppContainer extends Component {
 
@@ -23,6 +23,7 @@ export default class AppContainer extends Component {
     this.prev = this.prev.bind(this);
     this.selectAlbum = this.selectAlbum.bind(this);
     this.deselectAlbum = this.deselectAlbum.bind(this);
+    this.getArtistInfo = this.getArtistInfo.bind(this);
   }
 
   componentDidMount () {
@@ -42,6 +43,20 @@ export default class AppContainer extends Component {
       this.next());
     AUDIO.addEventListener('timeupdate', () =>
       this.setProgress(AUDIO.currentTime / AUDIO.duration));
+  }
+
+  getArtistInfo (artistId) {
+        const promiseA = axios.get(`/api/artists/${artistId}`).then(res => res.data)
+        const promiseB = axios.get(`/api/artists/${artistId}/albums`).then(res => res.data)
+        const promiseC = axios.get(`/api/artists/${artistId}/songs`).then(res => res.data)
+
+        Promise.all([promiseA, promiseB, promiseC])
+        .then((data) => {
+            const name = data[0].name
+            const artistAlbums = convertAlbums(data[1])
+            const songs = data[2].map(convertSong)
+            this.setState({name, artistAlbums, songs})
+        })
   }
 
   onLoad (albums) {
@@ -134,7 +149,13 @@ export default class AppContainer extends Component {
 
                 // Artist component's props
                 artists: this.state.artists,
-                selectedArtist: this.state.selectedArtist
+                selectedArtist: this.state.selectedArtist,
+
+                // 
+                getArtistInfo: this.getArtistInfo,
+                name: this.state.name,
+                songs: this.state.songs,
+                artistAlbums: this.state.artistAlbums
               })
               : null
           }

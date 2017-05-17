@@ -1,34 +1,27 @@
 import React from 'react';
-import {Link} from 'react-router';
+import axios from 'axios';
+import Albums from './Albums'
+import Songs from './Songs'
+
 
 class Artist extends React.Component {
+    constructor() {
+        super()
+    }
+    componentDidMount () {
+        const artistId = this.props.routeParams.artistId;
+        this.props.getArtistInfo(artistId)
+    }
 
-  constructor() {
-    super();
-  }
-
-  render(){
-    return (
-      <div>
-        <h3>Artists</h3>
-          <div className="list-group">
-          {
-            this.props.artists.map(artist => {
-              return (
-                <div className="list-group-item" key={artist.id}>
-                  {/* determine where to actually Link to later! */}
-                  <Link to="">{ artist.name }</Link>
-                </div>
-              )
-            })
-          }
-        </div>
-      </div>
-    )
-  }
-
-
-
+    render() {
+        return (
+            <div>
+            <h3>{this.props.name}</h3>
+            <Albums albums={this.props.artistAlbums} />
+            <Songs songs={this.props.songs} currentSong={this.props.currentSong} isPlaying={this.props.isPlaying} toggleOne={this.props.toggleOne} />
+            </div>
+        )
+    }
 }
 
-export default Artist
+export default Artist;
