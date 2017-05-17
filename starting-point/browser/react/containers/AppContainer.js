@@ -53,9 +53,9 @@ export default class AppContainer extends Component {
         Promise.all([promiseA, promiseB, promiseC])
         .then((data) => {
             const name = data[0].name
-            const artistAlbums = convertAlbums(data[1])
+            const albums = convertAlbums(data[1])
             const songs = data[2].map(convertSong)
-            this.setState({name, artistAlbums, songs})
+            this.setState({name, albums, songs})
         })
   }
 
@@ -151,7 +151,7 @@ export default class AppContainer extends Component {
                 artists: this.state.artists,
                 selectedArtist: this.state.selectedArtist,
 
-                // 
+                //
                 getArtistInfo: this.getArtistInfo,
                 name: this.state.name,
                 songs: this.state.songs,
